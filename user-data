@@ -1,0 +1,34 @@
+#cloud-config
+
+users:
+  - default
+  - name: user
+    sudo: ["ALL=(ALL) NOPASSWD:ALL\nDefaults:user !requiretty"]
+    lock_passwd: False
+    shell: /bin/bash
+  - name: ovidiu
+    sudo: ["ALL=(ALL) NOPASSWD:ALL\nDefaults:user !requiretty"]
+    lock_passwd: False
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - ssh-rsa TODO: public-key
+
+chpasswd:
+  list: |
+    user:user
+  expire: False
+
+runcmd:
+  - sudo yum install -y ntp
+  - sudo systemctl enable ntpd
+  - sudo systemctl start ntpd
+  - sudo rm /etc/localtime -f
+  - sudo ln -s /usr/share/zoneinfo/Europe/Dublin /etc/localtime
+  - sudo yum install -y centos-release-openstack-newton
+  - sudo yum update -y
+  - sudo yum install -y openstack-packstack
+  - sudo packstack --gen-answer-file /root/packstack.txt
+  - sudo sed -i 's/CONFIG_HEAT_INSTALL=n/CONFIG_HEAT_INSTALL=y/g' /root/packstack.txt
+  - sudo sed -i 's/CONFIG_CINDER_VOLUMES_SIZE=20G/CONFIG_CINDER_VOLUMES_SIZE=100G/g' /root/packstack.txt
+  - sudo sed -i 's/CONFIG_NAGIOS_INSTALL=y/CONFIG_NAGIOS_INSTALL=n/g' /root/packstack.txt
+  - sudo packstack --answer-file=/root/packstack.txt
