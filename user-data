@@ -32,3 +32,4 @@ runcmd:
   - sudo sed -i 's/CONFIG_CINDER_VOLUMES_SIZE=20G/CONFIG_CINDER_VOLUMES_SIZE=100G/g' /root/packstack.txt
   - sudo sed -i 's/CONFIG_NAGIOS_INSTALL=y/CONFIG_NAGIOS_INSTALL=n/g' /root/packstack.txt
   - sudo packstack --answer-file=/root/packstack.txt
+  - sudo yum install -y openstack-utils
